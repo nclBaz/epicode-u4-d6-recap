@@ -21,6 +21,14 @@ export const findProductById = async productId => {
   return foundProduct
 }
 
+export const findProductBySKU = async sku => {
+  const products = await getProducts()
+
+  const foundProduct = products.find(product => product.sku === sku)
+
+  return foundProduct
+}
+
 export const findProductByIdAndUpdate = async (productId, updates) => {
   const products = await getProducts()
   const index = products.findIndex(product => product.id === productId)

@@ -1,10 +1,11 @@
 import express from "express"
 import createHttpError from "http-errors"
 import { findProductById, findProductByIdAndDelete, findProductByIdAndUpdate, findProducts, saveNewProduct } from "../../lib/db/products.js"
+import { checksProductsSchema, checkValidationResult } from "./productsValidation.js"
 
 const productsRouter = express.Router()
 
-productsRouter.post("/", async (req, res, next) => {
+productsRouter.post("/", checksProductsSchema, checkValidationResult, async (req, res, next) => {
   try {
     const id = await saveNewProduct(req.body)
     res.status(201).send({ id })

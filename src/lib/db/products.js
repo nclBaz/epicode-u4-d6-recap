@@ -1,10 +1,10 @@
 import createHttpError from "http-errors"
 import uniqid from "uniqid"
-import { getProducts, writeProducts } from "../fs/tools.js"
+import { deleteProductsImages, getProducts, writeProducts } from "../fs/tools.js"
 
 export const saveNewProduct = async newProductData => {
   const products = await getProducts()
-  const newProduct = { ...newProductData, createdAt: new Date(), id: uniqid() }
+  const newProduct = { ...newProductData, createdAt: new Date(), id: uniqid(), reviews: [] }
   products.push(newProduct)
   await writeProducts(products)
 
@@ -45,6 +45,10 @@ export const findProductByIdAndUpdate = async (productId, updates) => {
 
 export const findProductByIdAndDelete = async productId => {
   const products = await getProducts()
+
+  const product = await findProductById(productId)
+
+  await deleteProductsImages(product.imageUrl)
 
   const remainingProducts = products.filter(product => product.id !== productId)
 

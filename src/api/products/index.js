@@ -1,6 +1,6 @@
 import express from "express"
 import createHttpError from "http-errors"
-import { findProductById, findProducts, saveNewProduct } from "../../lib/db/products.js"
+import { findProductById, findProductByIdAndDelete, findProductByIdAndUpdate, findProducts, saveNewProduct } from "../../lib/db/products.js"
 
 const productsRouter = express.Router()
 
@@ -37,6 +37,12 @@ productsRouter.get("/:productId", async (req, res, next) => {
 
 productsRouter.put("/:productId", async (req, res, next) => {
   try {
+    const product = await findProductByIdAndUpdate(req.params.productId, req.body)
+    if (product) {
+      res.send(product)
+    } else {
+      next(createHttpError(404, `Product with id ${req.params.productId} not found!`))
+    }
   } catch (error) {
     next(error)
   }
@@ -44,6 +50,8 @@ productsRouter.put("/:productId", async (req, res, next) => {
 
 productsRouter.delete("/:productId", async (req, res, next) => {
   try {
+    await findProductByIdAndDelete(req.params.productId)
+    res.status(204).send()
   } catch (error) {
     next(error)
   }
